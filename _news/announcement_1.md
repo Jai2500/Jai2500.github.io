@@ -1,8 +1,9 @@
 ---
 layout: post
-date: 2015-10-22 15:59:00-0400
+date: 2024-07-12 15:59:00-0400
 inline: true
 related_posts: false
 ---
 
-A simple inline announcement.
+I have been awarded the Ritesh Tiwari Outstanding MS Thesis Award for 2023 [(Best Thesis Award)](https://alumnifund.iiit.ac.in/giving/endowments/index.html)
+

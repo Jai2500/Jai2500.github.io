@@ -2,24 +2,26 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Motto. Etc.
+subtitle: Computer Vison • Representation Learning • Computer Graphics • AI4Science
 
 profile:
   align: right
-  image: prof_pic.jpg
-  image_circular: false # crops the image to make it circular
+  image: prof_pic.png
+  image_circular: true # crops the image to make it circular
   more_info: >
-    <p>555 your office number</p>
-    <p>123 your address street</p>
-    <p>Your City, State 12345</p>
+    New Delhi, India
 
 news: true # includes a list of news items
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
+Hello 👋 !
 
-Put your address / P.O. box / other info right below your picture. You can also disable any of these elements by editing `profile` property of the YAML header of your `_pages/about.md`. Edit `_bibliography/papers.bib` and Jekyll will render your [publications page](/al-folio/publications/) automatically.
+My name is Jai. I work as a pre-doctoral researcher at TCS Research where I work with [Ramya Hebbalaguppe](https://rhebbalaguppe.github.io/) in the Deep Learning and AI Lab. At TCS my work predominantly revolves around generative models such as diffusion models (such as their evaluation, controllability and interpretability) and 3D computer graphics (viz. curve skeletonizations, DDG). 
 
-Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them.
+Prior to joining TCS Research, I completed my Masters Thesis under [Dr. Subhadip Mitra](https://sites.google.com/site/subhadipmitra/) in CCNSB IIIT Hyderabad on the topic of ["Revisiting Deep Learning for Particle Physics"](https://web2py.iiit.ac.in/research_centres/publications/view_publication/mastersthesis/1269). I currently work part-time as a research lead — guiding projects related to self-supervised representation learning for foundation models, GNN interpretability and generative modelling.
+
+I am open to discussing interesting ideas in any of these domains. So hit me up if you'd like to collaborate! 
+
+You can get my updated CV [here](https://drive.google.com/file/d/1xk3wYx-_JzehZe1O56wq5qxsd2hayotX/view?usp=sharing).
