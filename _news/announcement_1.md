@@ -6,4 +6,3 @@ related_posts: false
 ---
 
 I have been awarded the Ritesh Tiwari Outstanding MS Thesis Award for 2023 [(Best Thesis Award)](https://alumnifund.iiit.ac.in/giving/endowments/index.html)
-

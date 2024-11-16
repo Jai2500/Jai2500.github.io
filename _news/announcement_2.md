@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-I have been awarded the Gold Medalist Award for the CND Department at IIIT Hyderabad for the highest CGPA of the 2018 incoming batch. 
+I have been awarded the Gold Medalist Award for the CND Department at IIIT Hyderabad for the highest CGPA of the 2018 incoming batch.
