@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Z score loss
+title: Loss function to optimise signal significance in particle physics
 date: 2024-11-18 23:59:59
 description: A post describing the details of our latest work
 tags: paper machine-learning
