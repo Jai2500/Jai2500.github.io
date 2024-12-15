@@ -25,4 +25,4 @@ Prior to joining TCS Research, I completed my Masters Thesis under [Dr. Subhadip
 
 I am open to discussing interesting ideas in any of these domains. So hit me up if you'd like to collaborate!
 
-You can get my (*somewhat*) updated CV [here](https://drive.google.com/file/d/1xk3wYx-_JzehZe1O56wq5qxsd2hayotX/view?usp=sharing).
+You can get my (_somewhat_) updated CV [here](https://drive.google.com/file/d/1xk3wYx-_JzehZe1O56wq5qxsd2hayotX/view?usp=sharing).
