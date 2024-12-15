@@ -7,14 +7,10 @@ tags: paper machine-learning
 categories: paper-details
 ---
 
-THE AUTHORS ARE LIVE RIGHT NOW:
+Special thanks to [Jihan Zaki](https://www.jihanzaki.com) for helping us put up the poster at the conference hall.
 
-[Zoom Link](https://us05web.zoom.us/j/86414326882?pwd=KsC2zWr0JvawazjdmqsSqAx5FsQ67O.1)
+THE AUTHORS ARE LIVE RIGHT NOW: [Zoom Link](https://us05web.zoom.us/j/86414326882?pwd=KsC2zWr0JvawazjdmqsSqAx5FsQ67O.1)
 
-Meeting ID: 864 1432 6882
-
-Passcode: 5TXJdc
+Meeting ID: 864 1432 6882 --- Passcode: 5TXJdc
 
 The code repository is available [here](https://github.com/Jai2500/Z-Score-Loss).
-
-Special thanks to [Jihan Zaki](https://www.jihanzaki.com).
