@@ -1,1 +1,193 @@
-function ToggleVideo(e){for(var t=document.getElementsByClassName(e+"-video"),n=0;n<t.length;n++)t[n].paused?t[n].play():t[n].pause()}function SlowVideo(e){for(var t=document.getElementsByClassName(e+"-video"),n=0;n<t.length;n++)t[n].playbackRate=.9*t[n].playbackRate,t[n].play();var a=document.getElementById(e+"-msg");a.innerHTML="Speed: \xd7"+t[0].playbackRate.toFixed(2),a.classList.add("fade-in-out"),a.style.animation="none",a.offsetHeight,a.style.animation=null}function FastVideo(e){for(var t=document.getElementsByClassName(e+"-video"),n=0;n<t.length;n++)t[n].playbackRate=t[n].playbackRate/.9,t[n].play();var a=document.getElementById(e+"-msg");a.innerHTML="Speed: \xd7"+t[0].playbackRate.toFixed(2),a.classList.add("fade-in-out"),a.style.animation="none",a.offsetHeight,a.style.animation=null}function RestartVideo(e){for(var t=document.getElementsByClassName(e+"-video"),n=0;n<t.length;n++)t[n].pause(),t[n].playbackRate=1,t[n].currentTime=0,t[n].play();var a=document.getElementById(e+"-msg");a.innerHTML="Speed: \xd7"+t[0].playbackRate.toFixed(2),a.classList.add("fade-in-out"),a.style.animation="none",a.offsetHeight,a.style.animation=null}var contents=document.getElementsByClassName("slide-content"),slideMenu=document.getElementById("slide-menu");slideMenu&&slideMenu.addEventListener("click",function(e){const t=[...this.children].filter(e=>e.className.indexOf("dot")>-1).indexOf(e.target);if(t>=0){var n=document.querySelector(".dot.active");n&&n.classList.remove("active"),e.target.classList.add("active");for(var a=0;a<contents.length;a++)contents[a].style.display=a==t?"block":"none"}});const slider=document.querySelector(".container .slider"),[btnLeft,btnRight]=["prev_btn","next_btn"].map(e=>document.getElementById(e));let interval;const setPositions=()=>{slider&&[...slider.children].forEach((e,t)=>e.style.left=`${440*(t-1)}px`)};slider&&setPositions();const setTransitionSpeed=e=>{slider&&[...slider.children].forEach(t=>t.style.transitionDuration=e)},next=(e=!1)=>{slider&&(setTransitionSpeed(e?"1.5s":"0.2s"),slider.appendChild(slider.firstElementChild),setPositions())},prev=()=>{slider&&(setTransitionSpeed("0.2s"),slider.prepend(slider.lastElementChild),setPositions())},startAuto=()=>interval=interval||setInterval(()=>next(!0),2e3),stopAuto=()=>{clearInterval(interval),interval=null};btnRight&&btnRight.addEventListener("click",()=>next(!1)),btnLeft&&btnLeft.addEventListener("click",prev),[slider,btnLeft,btnRight].forEach(e=>{e&&(e.addEventListener("mouseover",stopAuto),e.addEventListener("mouseout",startAuto))}),slider&&startAuto();var codeBlocks=document.querySelectorAll("pre");codeBlocks.forEach(function(e){console.log("Processing pre block");var t=document.createElement("button");t.className="code-copy-btn",t.innerHTML='<i class="far fa-copy"></i><span class="copy-text"></span>',e.appendChild(t),t.addEventListener("click",function(n){n.preventDefault();var a=e.querySelector("code");if(a){var s=a.textContent;navigator.clipboard.writeText(s).then(function(){t.classList.add("copied");var e=t.querySelector("i"),n=t.querySelector(".copy-text");e.className="fa-solid fa-check",n&&(n.textContent="Copied"),setTimeout(function(){e.className="far fa-copy",n&&(n.textContent=""),t.classList.remove("copied")},2e3)})["catch"](function(e){console.error("Failed to copy:",e)})}})});
+//* ======================== Slide Control ===================== */
+var contents = document.getElementsByClassName("slide-content");
+
+var slideMenu = document.getElementById("slide-menu");
+if (slideMenu) {
+  slideMenu.addEventListener("click", function(e) {
+    const idx = [...this.children]
+      .filter(el => el.className.indexOf('dot') > -1)
+      .indexOf(e.target);
+      
+    if (idx >= 0) {
+      var prev = document.querySelector(".dot.active");
+      if (prev) prev.classList.remove("active");
+      e.target.classList.add("active");
+      
+      for (var i = 0; i < contents.length; i++) {
+        if (i == idx) {
+          contents[i].style.display = "block";
+        } else {
+          contents[i].style.display = "none";
+        }
+      }  
+    }
+  });
+}
+
+//* ======================== Video Control ===================== */
+function ToggleVideo(x) {
+  var videos = document.getElementsByClassName(x + '-video');
+  for (var i = 0; i < videos.length; i++) {
+      if (videos[i].paused) {
+          videos[i].play();
+      } else {
+          videos[i].pause();
+      }
+  }
+};
+
+
+function SlowVideo(x) {
+  var videos = document.getElementsByClassName(x + '-video');
+  for (var i = 0; i < videos.length; i++) {
+    videos[i].playbackRate = videos[i].playbackRate * 0.9;
+    videos[i].play();
+  }
+  
+  var msg = document.getElementById(x + '-msg');
+  msg.innerHTML = 'Speed: ' + '×' + videos[0].playbackRate.toFixed(2);
+
+  msg.classList.add("fade-in-out");
+  msg.style.animation = 'none';
+  msg.offsetHeight; /* trigger reflow */
+  msg.style.animation = null; };
+
+
+function FastVideo(x) {
+  var videos = document.getElementsByClassName(x + '-video');
+  for (var i = 0; i < videos.length; i++) {
+    videos[i].playbackRate = videos[i].playbackRate / 0.9;
+    videos[i].play();
+  }
+
+  var msg = document.getElementById(x + '-msg');
+  msg.innerHTML = 'Speed: ' + '×' + videos[0].playbackRate.toFixed(2);
+
+  msg.classList.add("fade-in-out");
+  msg.style.animation = 'none';
+  msg.offsetHeight; /* trigger reflow */
+  msg.style.animation = null; 
+};
+
+function RestartVideo(x) {
+  var videos = document.getElementsByClassName(x + '-video');
+  for (var i = 0; i < videos.length; i++) {
+    videos[i].pause();
+    videos[i].playbackRate = 1.0;
+    videos[i].currentTime = 0;
+    videos[i].play();
+  }
+  
+  var msg = document.getElementById(x + '-msg');
+  msg.innerHTML = 'Speed: ' + '×' + videos[0].playbackRate.toFixed(2);
+
+  msg.classList.add("fade-in-out");
+  msg.style.animation = 'none';
+  msg.offsetHeight; /* trigger reflow */
+  msg.style.animation = null; 
+};
+
+//* ======================== Slide Show Control ===================== */
+const slider = document.querySelector('.container .slider');
+const [btnLeft, btnRight] = ['prev_btn', 'next_btn'].map(id => document.getElementById(id));
+let interval;
+
+// Set positions
+const setPositions = () => {
+    if (slider) {
+        [...slider.children].forEach((item, i) => 
+            item.style.left = `${(i-1) * 440}px`);
+    }
+};
+
+// Initial setup
+if (slider) {
+    setPositions();
+}
+
+// Set transition speed
+const setTransitionSpeed = (speed) => {
+    if (slider) {
+        [...slider.children].forEach(item => 
+            item.style.transitionDuration = speed);
+    }
+};
+
+// Slide functions
+const next = (isAuto = false) => {
+    if (slider) {
+        setTransitionSpeed(isAuto ? '1.5s' : '0.2s');
+        slider.appendChild(slider.firstElementChild); 
+        setPositions();
+    }
+};
+
+const prev = () => {
+    if (slider) {
+        setTransitionSpeed('0.2s');
+        slider.prepend(slider.lastElementChild); 
+        setPositions();
+    }
+};
+
+// Auto slide
+const startAuto = () => interval = interval || setInterval(() => next(true), 2000);
+const stopAuto = () => { clearInterval(interval); interval = null; };
+
+// Event listeners
+if (btnRight) btnRight.addEventListener('click', () => next(false));
+if (btnLeft) btnLeft.addEventListener('click', prev);
+
+// Mouse hover controls
+[slider, btnLeft, btnRight].forEach(el => {
+    if (el) {
+        el.addEventListener('mouseover', stopAuto);
+        el.addEventListener('mouseout', startAuto);
+    }
+});
+
+// Start auto slide
+if (slider) startAuto();
+
+//* ======================== Copy Button in Code ===================== */
+// add copy button to code blocks
+var codeBlocks = document.querySelectorAll('pre');
+codeBlocks.forEach(function(pre) {
+  console.log('Processing pre block');
+  var button = document.createElement('button');
+  button.className = 'code-copy-btn';
+  button.innerHTML = '<i class="far fa-copy"></i><span class="copy-text"></span>';
+  pre.appendChild(button);
+  
+  // Add click handler for copy functionality
+  button.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Get the code text from the code element
+    var code = pre.querySelector('code');
+    if (code) {
+      var text = code.textContent;
+      
+      // Copy to clipboard
+      navigator.clipboard.writeText(text).then(function() {
+          // Add copied class to show text (kept for animation)
+          button.classList.add('copied');
+          // Change icon to check and show text
+          var icon = button.querySelector('i');
+          var span = button.querySelector('.copy-text');
+          icon.className = 'fa-solid fa-check';
+          if (span) span.textContent = 'Copied';
+
+          // Reset icon, text and class after 2 seconds
+          setTimeout(function() {
+            icon.className = 'far fa-copy';
+            if (span) span.textContent = '';
+            button.classList.remove('copied');
+          }, 2000);
+      }).catch(function(err) {
+        console.error('Failed to copy:', err);
+      });
+    }
+  });
+});
+
