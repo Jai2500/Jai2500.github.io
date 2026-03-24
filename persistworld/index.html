@@ -1,318 +1,502 @@
-<html lang="en-GB">
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PersistWorld: Stabilizing Multi-step Robot World Model Rollouts via Reinforcement Learning</title>
-    <meta name="description" content="PersistWorld closes the closed-loop gap in robot world models via RL post-training, achieving state-of-the-art rollout fidelity on the DROID dataset.">
-    <meta name="referrer" content="no-referrer-when-downgrade">
-    <meta name="robots" content="all">
-    <meta content="en_EN" property="og:locale">
-    <meta content="website" property="og:type">
-    <meta content="PersistWorld" property="og:title">
-    <meta content="Stabilizing Multi-step Robot World Model Rollouts via Reinforcement Learning" property="og:description">
+  <meta charset="utf-8">
+  <meta name="description"
+        content="PersistWorld closes the closed-loop gap in robot world models via RL post-training, achieving state-of-the-art rollout fidelity on the DROID dataset.">
+  <meta name="keywords" content="PersistWorld, robot world models, reinforcement learning, video generation, DROID">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PersistWorld: Stabilizing Multi-step Robot World Model Rollouts via Reinforcement Learning</title>
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:description" content="PersistWorld: Stabilizing Multi-step Robot World Model Rollouts via Reinforcement Learning">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:description" content="PersistWorld: Stabilizing Multi-step Robot World Model Rollouts via Reinforcement Learning">
 
-    <link rel="stylesheet" type="text/css" media="all" href="assets/stylesheets/main_free.css" />
-    <link rel="stylesheet" type="text/css" media="all" href="clarity/clarity.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/foundation.min.css">
-    <link href="assets/fontawesome-free-7.2.0-web/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/styles.css"/>
-    <script defer src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
-    <script src="assets/scripts/navbar.js"></script>  <!-- Comment to remove table of content. -->
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            "HTML-CSS": {
-              scale: 95,
-              fonts: ["Gyre-Pagella"],
-              imageFont: null,
-              undefinedFamily: "'Arial Unicode MS', cmbright"
-            },
-            tex2jax: {
-                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-                processEscapes: true
-              }
-          });
-    </script>
-    <script type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-    </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        /* Fade teaser bottom edge into header background */
-        #first-content img[alt="Teaser"] {
-            -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
-            mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
-            border-radius: 6px 6px 0 0;
-            margin-bottom: 0 !important;
-        }
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
 
-        /* Fade image edges to background for white-background plots */
-        div.container.blog.gray-linear img {
-            -webkit-mask-image:
-                linear-gradient(to right,  transparent 0%, black 2.5%, black 97.5%, transparent 100%),
-                linear-gradient(to bottom, transparent 0%, black 4%, black 96%, transparent 100%);
-            mask-image:
-                linear-gradient(to right,  transparent 0%, black 2.5%, black 97.5%, transparent 100%),
-                linear-gradient(to bottom, transparent 0%, black 4%, black 96%, transparent 100%);
-            -webkit-mask-composite: source-in;
-            mask-composite: intersect;
-        }
-    </style>
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], processEscapes: true }
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  <style>
+    .caption {
+      font-size: 0.875rem;
+      color: #555;
+      margin-top: 0.75rem;
+      line-height: 1.5;
+    }
+    .section-gray {
+      background-color: #f5f5f5;
+    }
+    .results-table-wrapper {
+      overflow-x: auto;
+    }
+    .results-table td,
+    .results-table th {
+      text-align: center;
+      vertical-align: middle;
+    }
+    .results-table td:first-child {
+      text-align: left;
+    }
+    .metric-label {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      margin-top: 1.25rem;
+    }
+  </style>
 </head>
-
 <body>
-    <!-- Title Page -->
-    <div class="container blog" id="first-content" style="background-color: #E8EDF0; width: 100%; box-sizing: border-box; margin-left: 0; margin-right: 0;">
-        <div class="blog-title no-cover">
-            <div class="blog-intro">
-                <div>
-                    <h1 class="title">PersistWorld: Stabilizing Multi-step Robot World Model Rollouts via Reinforcement Learning</h1>
-                    <p class="author">Jai Bardhan&nbsp;&nbsp;·&nbsp;&nbsp;Patrik Drozdík&nbsp;&nbsp;·&nbsp;&nbsp;Josef Šivic&nbsp;&nbsp;·&nbsp;&nbsp;Vladimír Petrík</p>
-                    <p class="author" style="padding-top: 4px; font-size: 0.9rem; color: #555;">Czech Institute of Informatics, Robotics and Cybernetics (CIIRC), Czech Technical University in Prague</p>
-                    <img src="assets/figures/teaser_v3.png" alt="Teaser" style="width:100%; margin: 16px 0 10px; border-radius:6px;">
-                    <p class="abstract" style="text-align: justify; margin-top: 18px;">
-                        Action-conditioned robot world models generate future video frames given a robot action sequence, but break down during long-horizon autoregressive deployment: each predicted clip feeds back as context for the next, causing errors to compound and visual quality to rapidly degrade — a phenomenon known as the <em>closed-loop gap</em>. We present <strong>PersistWorld</strong>, an RL post-training framework that trains the world model directly on its own autoregressive rollouts, using contrastive denoising with multi-view perceptual rewards. Our approach establishes a new state-of-the-art on the DROID dataset: LPIPS reduced by 14% on external cameras, SSIM improved by 9.1% on the wrist camera, winning ~98% of paired comparisons, and achieving an 80% preference rate in a blind human study.
-                    </p>
-                </div>
-                <div class="info" style="margin-top: 20px;">
-                    <div>
-                        <a href="" class="button icon" style="background-color: rgba(255,255,255,0.35); margin-bottom: 0;">Paper <i class="fa-solid fa-book-open"></i></a>
-                        <a href="" class="button icon" style="background-color: rgba(255,255,255,0.35); margin-bottom: 0;">Code <i class="fa-solid fa-code"></i></a>
-                    </div>
-                </div>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://jai2500.github.io">
+        <span class="icon">
+          <i class="fas fa-home"></i>
+        </span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ===== HERO: Title / Authors / Buttons ===== -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">PersistWorld: Stabilizing Multi-step Robot World Model Rollouts via Reinforcement Learning</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Jai Bardhan,&nbsp;</span>
+            <span class="author-block">Patrik Drozdík,&nbsp;</span>
+            <span class="author-block">Josef Šivic,&nbsp;</span>
+            <span class="author-block">Vladimír Petrík</span>
+          </div>
+          <div class="is-size-6 publication-authors" style="margin-top: 0.4rem; color: #555;">
+            <span class="author-block">Czech Institute of Informatics, Robotics and Cybernetics (CIIRC),<br>Czech Technical University in Prague</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
             </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+</section>
 
-
-    <!-- ===== VIDEO ===== -->
-    <div class="container blog max" style="background:#111; position:relative; line-height:0;">
-        <video id="hero-video" loop playsinline muted autoplay style="width:100%; display:block; max-height:80vh; object-fit:contain;">
-            <source src="video.mp4" type="video/mp4">
-        </video>
+<!-- ===== TEASER VIDEO ===== -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" controls playsinline width="100%">
+        <source src="./video.mp4" type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        <strong>PersistWorld</strong> stabilizes long-horizon robot world model rollouts
+        via RL post-training on autoregressive outputs.
+      </h2>
     </div>
-    <div class="container blog max" style="background:#1a1a1a; line-height:1; padding:10px 0 14px; text-align:center;">
-        <button id="unmute-btn" title="Toggle sound" style="background:rgba(255,255,255,0.12); color:#fff; border:1px solid rgba(255,255,255,0.35); border-radius:24px; padding:7px 22px; font-size:14px; font-weight:500; letter-spacing:0.03em; cursor:pointer;">🔇&nbsp; Muted &mdash; click to enable sound</button>
-    </div>
-    <script>
-        (function(){
-            var vid = document.getElementById('hero-video');
-            var btn = document.getElementById('unmute-btn');
-            btn.addEventListener('click', function(){
-                vid.muted = !vid.muted;
-                btn.innerHTML = vid.muted ? '🔇&nbsp; Muted &mdash; click to enable sound' : '🔊&nbsp; Sound on &mdash; click to mute';
-            });
-            var io = new IntersectionObserver(function(entries){
-                entries.forEach(function(e){
-                    if(e.isIntersecting){ vid.play().catch(function(){}); } else { vid.pause(); }
-                });
-            }, {threshold: 0.25});
-            io.observe(vid);
-        })();
-    </script>
+  </div>
+</section>
 
-    <div class="container blog main first" id="blog-main">
-        <h1>The Closed-Loop Gap</h1>
-        <p class='text' style="text-align: justify;">
-            Standard diffusion world models are trained under <em>teacher forcing</em>: given ground-truth history frames, predict the next clip. At deployment, however, the model must condition on its own previously generated outputs — inputs it was never trained to handle. Small per-step errors accumulate, rapidly degrading coherence in scenes, objects, and robot poses. This is the <strong>closed-loop gap</strong>.
-        </p>
-        <p class="text" style="text-align: justify;">
-            Using the DROID robot manipulation dataset, we show this failure mode is rapid and severe: within seconds of autoregressive generation, manipulated objects lose their structural identity, robot end-effectors drift from commanded trajectories, and scene configurations decohere. No amount of teacher-forced training resolves this — the model is simply never exposed to its own imperfect history during training. What is needed is a training signal computed directly from the model's own autoregressive outputs.
-        </p>
-    </div>
 
-    <!-- ===== METHOD ===== -->
-    <div class="container blog main">
-        <h1>Method</h1>
-        <p class="text" style="text-align: justify;">
-            PersistWorld addresses the closed-loop gap via <strong>online RL post-training</strong>. Rather than training on ground-truth history, we run the model autoregressively on its own outputs, compare groups of candidate continuations, and update toward higher-fidelity generations using a contrastive denoising objective — no backpropagation through the denoising chain required.
-        </p>
-        <p class="text" style="text-align: justify;">
-            We adapt a recent contrastive RL framework for diffusion models to the EDM $x_0$-prediction parameterization used by the Ctrl-World backbone, and prove that the policy-improvement guarantees carry over exactly. The training protocol branches $K{=}16$ candidate continuations from a shared rollout history, ranks them with multi-view perceptual rewards (LPIPS, SSIM, PSNR), and uses the ranking to update lightweight LoRA adapters and the action encoder.
-        </p>
-    </div>
-
-    <div class="container blog extra-large gray">
-        <img src="assets/figures/method_v5.png" alt="Method overview" style="width:100%;">
-        <p class="caption">
-            <strong>Overview of PersistWorld.</strong> <em>(Top)</em> Autoregressive inference: a robot policy feeds actions to the world model, which appends generated frames to the history buffer for the next step. <em>(Bottom)</em> RL post-training: <strong>S1</strong> roll out a shared variable-length prefix from a ground-truth starting state; <strong>S2</strong> branch $K$ independent candidate continuations; <strong>S3</strong> score candidates with multi-view perceptual rewards; <strong>S4</strong> reward weights scale implicit positive/negative $x_0$ predictions in the contrastive loss.
-        </p>
-    </div>
-
-    <!-- ===== RESULTS ===== -->
-    <div class="container blog main">
-        <h1>Results</h1>
-
-        <h2>Quantitative Metrics</h2>
-        <p class="text" style="text-align: justify;">
-            We evaluate on 14-step autoregressive rollouts (≈11 s) on the DROID validation split. PersistWorld outperforms all baselines on every metric. The largest relative gains appear on the <strong>wrist camera</strong> — the view most critical for fine-grained object manipulation — where SSIM improves by 9.1% and LPIPS by 10.4%.
-        </p>
-
-        <div class="table-wrapper">
-            <table>
-                <thead class="center">
-                    <tr>
-                        <th>Cameras</th>
-                        <th>Model</th>
-                        <th>SSIM ↑</th>
-                        <th>PSNR ↑</th>
-                        <th>LPIPS ↓</th>
-                    </tr>
-                </thead>
-                <tbody class="center">
-                    <tr>
-                        <td rowspan="5" style="font-weight:500;">External</td>
-                        <td>WPE <sup>*</sup></td>
-                        <td>0.77</td>
-                        <td>20.33</td>
-                        <td>0.131</td>
-                    </tr>
-                    <tr>
-                        <td>IRASim <sup>*</sup></td>
-                        <td>0.77</td>
-                        <td>21.36</td>
-                        <td>0.117</td>
-                    </tr>
-                    <tr>
-                        <td>Ctrl-World <sup>*</sup></td>
-                        <td>0.83</td>
-                        <td>23.56</td>
-                        <td>0.091</td>
-                    </tr>
-                    <tr>
-                        <td>Ctrl-World <sup>†</sup></td>
-                        <td>0.84</td>
-                        <td>23.02</td>
-                        <td>0.081</td>
-                    </tr>
-                    <tr>
-                        <td><strong>PersistWorld (Ours)</strong></td>
-                        <td><strong>0.86</strong></td>
-                        <td><strong>24.42</strong></td>
-                        <td><strong>0.070</strong></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="2" style="font-weight:500;">Wrist</td>
-                        <td>Ctrl-World <sup>†</sup></td>
-                        <td>0.62</td>
-                        <td>17.80</td>
-                        <td>0.310</td>
-                    </tr>
-                    <tr>
-                        <td><strong>PersistWorld (Ours)</strong></td>
-                        <td><strong>0.67</strong></td>
-                        <td><strong>19.39</strong></td>
-                        <td><strong>0.277</strong></td>
-                    </tr>
-                </tbody>
-            </table>
+<!-- ===== ABSTRACT ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Action-conditioned robot world models generate future video frames given a robot
+            action sequence, but break down during long-horizon autoregressive deployment: each
+            predicted clip feeds back as context for the next, causing errors to compound and
+            visual quality to rapidly degrade — a phenomenon known as the <em>closed-loop
+            gap</em>. We present <strong>PersistWorld</strong>, an RL post-training framework
+            that trains the world model directly on its own autoregressive rollouts, using
+            contrastive denoising with multi-view perceptual rewards. Our approach establishes
+            a new state-of-the-art on the DROID dataset: LPIPS reduced by 14% on external
+            cameras, SSIM improved by 9.1% on the wrist camera, winning ~98% of paired
+            comparisons, and achieving an 80% preference rate in a blind human study.
+          </p>
         </div>
-        <p class="text" style="font-size:0.82rem; color:#666; margin-top:6px;">
-            <sup>*</sup> Numbers from Ctrl-World paper. <sup>†</sup> Our reproduction.
-        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <h2>Paired-Comparison Win Rate</h2>
-        <p class="text" style="text-align: justify;">
-            On a 1-to-1 paired comparison across all validation trajectories, PersistWorld outperforms the baseline on approximately 98% of samples ($p &lt; 10^{-6}$). The distributions below show per-sample $\Delta_{\text{metric}}$ (ours − baseline): positive means we are better.
-        </p>
+
+<!-- ===== THE CLOSED-LOOP GAP ===== -->
+<section class="section section-gray">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">The Closed-Loop Gap</h2>
+    <div class="content has-text-justified">
+      <p>
+        Standard diffusion world models are trained under <em>teacher forcing</em>: given
+        ground-truth history frames, predict the next clip. At deployment, however, the model
+        must condition on its own previously generated outputs — inputs it was never trained to
+        handle. Small per-step errors accumulate, rapidly degrading coherence in scenes,
+        objects, and robot poses. This is the <strong>closed-loop gap</strong>.
+      </p>
+      <p>
+        Using the DROID robot manipulation dataset, we show this failure mode is rapid and
+        severe: within seconds of autoregressive generation, manipulated objects lose their
+        structural identity, robot end-effectors drift from commanded trajectories, and scene
+        configurations decohere. No amount of teacher-forced training resolves this — the model
+        is simply never exposed to its own imperfect history during training. What is needed is
+        a training signal computed directly from the model's own autoregressive outputs.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== METHOD ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Method</h2>
+    <div class="content has-text-justified">
+      <p>
+        PersistWorld addresses the closed-loop gap via <strong>online RL post-training</strong>.
+        Rather than training on ground-truth history, we run the model autoregressively on its
+        own outputs, compare groups of candidate continuations, and update toward
+        higher-fidelity generations using a contrastive denoising objective — no
+        backpropagation through the denoising chain required.
+      </p>
+      <p>
+        We adapt a recent contrastive RL framework for diffusion models to the EDM
+        $x_0$-prediction parameterization used by the Ctrl-World backbone, and prove that the
+        policy-improvement guarantees carry over exactly. The training protocol branches
+        $K{=}16$ candidate continuations from a shared rollout history, ranks them with
+        multi-view perceptual rewards (LPIPS, SSIM, PSNR), and uses the ranking to update
+        lightweight LoRA adapters and the action encoder.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-gray">
+  <div class="container is-max-desktop">
+    <figure>
+      <img src="./assets/figures/method_v5.png" alt="Method overview" style="width: 100%; border-radius: 6px;">
+    </figure>
+    <p class="caption has-text-centered">
+      <strong>Overview of PersistWorld.</strong> <em>(Top)</em> Autoregressive inference: a
+      robot policy feeds actions to the world model, which appends generated frames to the
+      history buffer for the next step. <em>(Bottom)</em> RL post-training:
+      <strong>S1</strong> roll out a shared variable-length prefix from a ground-truth
+      starting state; <strong>S2</strong> branch $K$ independent candidate continuations;
+      <strong>S3</strong> score candidates with multi-view perceptual rewards;
+      <strong>S4</strong> reward weights scale implicit positive/negative $x_0$ predictions
+      in the contrastive loss.
+    </p>
+  </div>
+</section>
+
+
+<!-- ===== RESULTS ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Results</h2>
+
+    <h3 class="title is-4">Quantitative Metrics</h3>
+    <div class="content has-text-justified">
+      <p>
+        We evaluate on 14-step autoregressive rollouts (≈11 s) on the DROID validation split.
+        PersistWorld outperforms all baselines on every metric. The largest relative gains
+        appear on the <strong>wrist camera</strong> — the view most critical for fine-grained
+        object manipulation — where SSIM improves by 9.1% and LPIPS by 10.4%.
+      </p>
     </div>
 
-    <div class="container blog extra-large gray-linear">
-        <div class="columns-3">
-            <img src="assets/figures/all_views_delta_distribution_lpips.png" alt="ΔLPIPS distribution" style="width:100%;">
-            <img src="assets/figures/all_views_delta_distribution_psnr.png" alt="ΔPSNR distribution" style="width:100%;">
-            <img src="assets/figures/all_views_delta_distribution_ssim.png" alt="ΔSSIM distribution" style="width:100%;">
-        </div>
-        <p class="caption">
-            Per-sample metric deltas (PersistWorld − baseline) across all validation trajectories. The distributions are heavily concentrated on the positive side, confirming consistent improvements.
+    <div class="results-table-wrapper">
+      <table class="table is-bordered is-striped is-hoverable is-fullwidth results-table">
+        <thead>
+          <tr>
+            <th>Cameras</th>
+            <th>Model</th>
+            <th>SSIM ↑</th>
+            <th>PSNR ↑</th>
+            <th>LPIPS ↓</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="5" style="vertical-align: middle; font-weight: 500;">External</td>
+            <td>WPE <sup>*</sup></td>
+            <td>0.77</td>
+            <td>20.33</td>
+            <td>0.131</td>
+          </tr>
+          <tr>
+            <td>IRASim <sup>*</sup></td>
+            <td>0.77</td>
+            <td>21.36</td>
+            <td>0.117</td>
+          </tr>
+          <tr>
+            <td>Ctrl-World <sup>*</sup></td>
+            <td>0.83</td>
+            <td>23.56</td>
+            <td>0.091</td>
+          </tr>
+          <tr>
+            <td>Ctrl-World <sup>†</sup></td>
+            <td>0.84</td>
+            <td>23.02</td>
+            <td>0.081</td>
+          </tr>
+          <tr>
+            <td><strong>PersistWorld (Ours)</strong></td>
+            <td><strong>0.86</strong></td>
+            <td><strong>24.42</strong></td>
+            <td><strong>0.070</strong></td>
+          </tr>
+          <tr>
+            <td rowspan="2" style="vertical-align: middle; font-weight: 500;">Wrist</td>
+            <td>Ctrl-World <sup>†</sup></td>
+            <td>0.62</td>
+            <td>17.80</td>
+            <td>0.310</td>
+          </tr>
+          <tr>
+            <td><strong>PersistWorld (Ours)</strong></td>
+            <td><strong>0.67</strong></td>
+            <td><strong>19.39</strong></td>
+            <td><strong>0.277</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption"><sup>*</sup> Numbers from Ctrl-World paper. <sup>†</sup> Our reproduction.</p>
+
+    <h3 class="title is-4" style="margin-top: 2rem;">Paired-Comparison Win Rate</h3>
+    <div class="content has-text-justified">
+      <p>
+        On a 1-to-1 paired comparison across all validation trajectories, PersistWorld
+        outperforms the baseline on approximately 98% of samples ($p &lt; 10^{-6}$). The
+        distributions below show per-sample $\Delta_{\text{metric}}$ (ours − baseline):
+        positive means we are better.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-gray">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column">
+        <img src="./assets/figures/all_views_delta_distribution_lpips.png"
+             alt="ΔLPIPS distribution" style="width: 100%;">
+      </div>
+      <div class="column">
+        <img src="./assets/figures/all_views_delta_distribution_psnr.png"
+             alt="ΔPSNR distribution" style="width: 100%;">
+      </div>
+      <div class="column">
+        <img src="./assets/figures/all_views_delta_distribution_ssim.png"
+             alt="ΔSSIM distribution" style="width: 100%;">
+      </div>
+    </div>
+    <p class="caption has-text-centered">
+      Per-sample metric deltas (PersistWorld − baseline) across all validation trajectories.
+      The distributions are heavily concentrated on the positive side, confirming consistent
+      improvements.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h3 class="title is-4">Qualitative Comparison</h3>
+    <div class="content has-text-justified">
+      <p>
+        We compare long-horizon (≈11 s) wrist-camera generations for two representative
+        scenarios. Despite both models starting from an identical ground-truth first frame,
+        the baseline rapidly loses structural identity of manipulated objects and the robot
+        arm. PersistWorld maintains spatial consistency throughout.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-gray">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column">
+        <img src="./assets/figures/qres_object_fidelity.png"
+             style="width: 100%; border-radius: 4px;">
+        <p class="caption has-text-centered">
+          <strong>Object-centric fidelity.</strong> The baseline (red) loses object
+          structure — a cup dissolves into an amorphous texture. Our model (green) maintains
+          shape throughout.
         </p>
-    </div>
-
-    <div class="container blog main">
-        <h2>Qualitative Comparison</h2>
-        <p class="text" style="text-align: justify;">
-            We compare long-horizon (≈11 s) wrist-camera generations for two representative scenarios. Despite both models starting from an identical ground-truth first frame, the baseline rapidly loses structural identity of manipulated objects and the robot arm. PersistWorld maintains spatial consistency throughout.
+      </div>
+      <div class="column">
+        <img src="./assets/figures/qres_robot_consistency.png"
+             style="width: 100%; border-radius: 4px;">
+        <p class="caption has-text-centered">
+          <strong>Robot-centric consistency.</strong> The baseline arm loses geometric
+          structure. PersistWorld preserves end-effector pose and joint configuration
+          throughout the rollout.
         </p>
+      </div>
     </div>
+  </div>
+</section>
 
-    <div class="container blog extra-large gray">
-        <div class="columns-2">
-            <div>
-                <img src="assets/figures/qres_object_fidelity.png" style="width:100%; border-radius:4px;">
-                <p class="caption" style="text-align:center;">
-                    <strong>Object-centric fidelity.</strong> The baseline (red) loses object structure — a cup dissolves into an amorphous texture. Our model (green) maintains shape throughout.
-                </p>
-            </div>
-            <div>
-                <img src="assets/figures/qres_robot_consistency.png" style="width:100%; border-radius:4px;">
-                <p class="caption" style="text-align:center;">
-                    <strong>Robot-centric consistency.</strong> The baseline arm loses geometric structure. PersistWorld preserves end-effector pose and joint configuration throughout the rollout.
-                </p>
-            </div>
-        </div>
+<section class="section">
+  <div class="container is-max-desktop">
+    <h3 class="title is-4">Metric Trends Over Rollout Depth</h3>
+    <div class="content has-text-justified">
+      <p>
+        Visual quality is plotted per clip index (each clip ≈0.8 s at 5 Hz), averaged over
+        validation trajectories. The baseline degrades monotonically as exposure bias
+        compounds; PersistWorld maintains substantially higher fidelity, with the gap widening
+        at longer horizons.
+      </p>
     </div>
+  </div>
+</section>
 
-    <div class="container blog main">
-        <h2>Metric Trends Over Rollout Depth</h2>
-        <p class="text" style="text-align: justify;">
-            Visual quality is plotted per clip index (each clip ≈0.8 s at 5 Hz), averaged over validation trajectories. The baseline degrades monotonically as exposure bias compounds; PersistWorld maintains substantially higher fidelity, with the gap widening at longer horizons.
+<section class="section section-gray">
+  <div class="container is-max-desktop">
+    <p class="metric-label"><strong>External Cameras</strong></p>
+    <div class="columns is-centered">
+      <div class="column">
+        <img src="./assets/figures/external_views_lpips_per_frame_metric_trends.png"
+             alt="LPIPS (external)" style="width: 100%;">
+      </div>
+      <div class="column">
+        <img src="./assets/figures/external_views_psnr_per_frame_metric_trends.png"
+             alt="PSNR (external)" style="width: 100%;">
+      </div>
+      <div class="column">
+        <img src="./assets/figures/external_views_ssim_per_frame_metric_trends.png"
+             alt="SSIM (external)" style="width: 100%;">
+      </div>
+    </div>
+    <p class="metric-label" style="margin-top: 1.5rem;"><strong>Wrist Camera</strong></p>
+    <div class="columns is-centered">
+      <div class="column">
+        <img src="./assets/figures/wrist_view_lpips_per_frame_metric_trends.png"
+             alt="LPIPS (wrist)" style="width: 100%;">
+      </div>
+      <div class="column">
+        <img src="./assets/figures/wrist_view_psnr_per_frame_metric_trends.png"
+             alt="PSNR (wrist)" style="width: 100%;">
+      </div>
+      <div class="column">
+        <img src="./assets/figures/wrist_view_ssim_per_frame_metric_trends.png"
+             alt="SSIM (wrist)" style="width: 100%;">
+      </div>
+    </div>
+    <p class="caption has-text-centered">
+      Per-clip metric trends over 14 autoregressive steps (≈11 s). The baseline (orange)
+      degrades monotonically; PersistWorld (blue) remains consistently better, with the
+      advantage compounding over longer horizons.
+    </p>
+  </div>
+</section>
+
+
+<!-- ===== HUMAN STUDY ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Human Study</h2>
+    <div class="content has-text-justified">
+      <p>
+        We conducted a blind two-alternative forced-choice (2AFC) study. Evaluators were shown
+        the same ground-truth reference video alongside two anonymous model outputs (A and B,
+        randomly assigned) and asked to judge which generated video was better overall,
+        considering robot consistency and object consistency. Raters preferred PersistWorld
+        over the baseline <strong>80% of the time</strong> ($n = 200$ comparisons).
+      </p>
+    </div>
+    <div class="has-text-centered" style="margin: 1.5rem 0;">
+      <img src="./assets/figures/overall_win_rate_bar.png"
+           alt="Human study win rate" style="width: 55%; max-width: 600px;">
+    </div>
+  </div>
+</section>
+
+<section class="section section-gray">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column">
+        <img src="./assets/figures/2afc_ui_onboarding_instruction.png"
+             style="width: 100%; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.12);">
+        <p class="caption has-text-centered">
+          Evaluator instructions shown before the study began.
         </p>
-    </div>
-
-    <div class="container blog extra-large gray-linear">
-        <p class="caption inline"><strong>External Cameras</strong></p>
-        <div class="columns-3">
-            <img src="assets/figures/external_views_lpips_per_frame_metric_trends.png" alt="LPIPS (external)" style="width:100%;">
-            <img src="assets/figures/external_views_psnr_per_frame_metric_trends.png" alt="PSNR (external)" style="width:100%;">
-            <img src="assets/figures/external_views_ssim_per_frame_metric_trends.png" alt="SSIM (external)" style="width:100%;">
-        </div>
-        <p class="caption inline" style="margin-top:14px;"><strong>Wrist Camera</strong></p>
-        <div class="columns-3">
-            <img src="assets/figures/wrist_view_lpips_per_frame_metric_trends.png" alt="LPIPS (wrist)" style="width:100%;">
-            <img src="assets/figures/wrist_view_psnr_per_frame_metric_trends.png" alt="PSNR (wrist)" style="width:100%;">
-            <img src="assets/figures/wrist_view_ssim_per_frame_metric_trends.png" alt="SSIM (wrist)" style="width:100%;">
-        </div>
-        <p class="caption">
-            Per-clip metric trends over 14 autoregressive steps (≈11 s). The baseline (orange) degrades monotonically; PersistWorld (blue) remains consistently better, with the advantage compounding over longer horizons.
+      </div>
+      <div class="column">
+        <img src="./assets/figures/2afc_ui_compare.png"
+             style="width: 100%; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.12);">
+        <p class="caption has-text-centered">
+          The comparison interface: reference video (top) with synchronized Option A and
+          Option B strips below.
         </p>
+      </div>
     </div>
+    <p class="caption has-text-centered">
+      Our 2AFC human study interface. A synchronized scrubber bar keeps all three video strips
+      in lockstep so evaluators can compare the same moment across reference, A, and B. Model
+      assignment was randomised to prevent position bias.
+    </p>
+  </div>
+</section>
 
-    <!-- ===== HUMAN STUDY ===== -->
-    <div class="container blog main">
-        <h1>Human Study</h1>
-        <p class="text" style="text-align: justify;">
-            We conducted a blind two-alternative forced-choice (2AFC) study. Evaluators were shown the same ground-truth reference video alongside two anonymous model outputs (A and B, randomly assigned) and asked to judge which generated video was better overall, considering robot consistency and object consistency. Raters preferred PersistWorld over the baseline <strong>80% of the time</strong> ($n = 200$ comparisons).
-        </p>
-        <div style="text-align:center; margin: 16px 0 4px;">
-            <img src="assets/figures/overall_win_rate_bar.png" alt="Human study win rate results" style="width:55%; max-width:600px;">
-        </div>
-    </div>
 
-    <div class="container blog extra-large gray">
-        <div class="columns-2">
-            <div>
-                <img src="assets/figures/2afc_ui_onboarding_instruction.png" style="width:100%; border-radius:6px; box-shadow: 0 2px 8px rgba(0,0,0,0.12);">
-                <p class="caption" style="text-align:center;">Evaluator instructions shown before the study began.</p>
-            </div>
-            <div>
-                <img src="assets/figures/2afc_ui_compare.png" style="width:100%; border-radius:6px; box-shadow: 0 2px 8px rgba(0,0,0,0.12);">
-                <p class="caption" style="text-align:center;">The comparison interface: reference video (top) with synchronized Option A and Option B strips below.</p>
-            </div>
-        </div>
-        <p class="caption">
-            Our 2AFC human study interface. A synchronized scrubber bar keeps all three video strips in lockstep so evaluators can compare the same moment across reference, A, and B. Model assignment was randomised to prevent position bias.
-        </p>
-    </div>
-
-    <!-- ===== BIBTEX ===== -->
-    <div class="container blog main">
-        <h1>BibTeX</h1>
-        <p class="text">If you find this work useful, please cite:</p>
-
-<pre><code class="plaintext">@inproceedings{bardhan2026persistworld,
+<!-- ===== BIBTEX ===== -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <p>If you find this work useful, please cite:</p>
+    <pre><code class="plaintext">@inproceedings{bardhan2026persistworld,
   title     = {PersistWorld: Stabilizing Multi-step Robot World Model Rollouts
                via Reinforcement Learning},
   author    = {Bardhan, Jai and Drozd\'{i}k, Patrik and \v{S}ivic, Josef
@@ -320,20 +504,44 @@
   booktitle = {ArXiv Preprint},
   year      = {2026}
 }</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="https://jai2500.github.io">
+        <i class="fas fa-home"></i>
+      </a>
     </div>
-
-    <!-- Footer Page -->
-    <footer>
-        <div class="container">
-            <p>
-                This website is built on the <a href="https://shikun.io/projects/clarity">Clarity Template</a>, designed by <a href="https://shikun.io/">Shikun Liu</a>.
-            </p>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            This website is based on the
+            <a href="https://nerfies.github.io">Nerfies</a> template, licensed under a
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
         </div>
-    </footer>
+      </div>
+    </div>
+  </div>
+</footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
-    <script src="clarity/clarity.js"></script>
-    <script src="assets/scripts/main.js"></script>
+<script>
+  // Navbar burger toggle
+  $(document).ready(function() {
+    $(".navbar-burger").click(function() {
+      $(".navbar-burger").toggleClass("is-active");
+      $(".navbar-menu").toggleClass("is-active");
+    });
+  });
+
+  // Syntax highlighting
+  hljs.initHighlightingOnLoad();
+</script>
+
 </body>
 </html>
