@@ -21,7 +21,7 @@ Hello 👋 !
 
 My name is Jai. 
 
-I work as a researcher at the [IMPACT Group](https://impact.ciirc.cvut.cz) at CIIRC with [Josef Sivic](https://people.ciirc.cvut.cz/~sivic/) on robot world models. 
+I work as a researcher at the [IMPACT Group](https://impact.ciirc.cvut.cz) at CIIRC under [Josef Sivic](https://people.ciirc.cvut.cz/~sivic/) and [Vladimir Petrik](https://petrikvladimir.github.io) on robot world models. 
 
 Before working at CIIRC, CTU I worked as a pre-doctoral researcher at TCS Research with [Ramya Hebbalaguppe](https://rhebbalaguppe.github.io/) in the Deep Learning and AI Lab. At TCS my work predominantly revolves around generative models such as diffusion models (such as their evaluation, controllability and interpretability) and 3D computer graphics (viz. curve skeletonizations, DDG).
 
