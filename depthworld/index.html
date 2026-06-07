@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="DepthWorld is a Stable Video Diffusion-based 3D world model for robot manipulation that jointly predicts multi-view RGB and metric depth, trained on the calibrated DROID-3D dataset.">
+  <meta name="keywords" content="DepthWorld, DROID-3D, 3D world models, robot manipulation, video diffusion, metric depth, calibration">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DepthWorld: 3D World Model for Robot Manipulation</title>
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:description" content="DepthWorld: 3D World Model for Robot Manipulation">
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], processEscapes: true }
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  <style>
+    .caption {
+      font-size: 0.875rem;
+      color: #555;
+      margin-top: 0.75rem;
+      line-height: 1.5;
+    }
+    .section-gray {
+      background-color: #f5f5f5;
+    }
+    .results-table-wrapper {
+      overflow-x: auto;
+    }
+    .results-table td,
+    .results-table th {
+      text-align: center;
+      vertical-align: middle;
+    }
+    .results-table td:first-child {
+      text-align: left;
+    }
+    .metric-label {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      margin-top: 1.25rem;
+    }
+    /* Responsive 16:9 wrapper for an embedded video (YouTube/Vimeo). */
+    .video-embed {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+    .video-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://jai2500.github.io">
+        <span class="icon">
+          <i class="fas fa-home"></i>
+        </span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ===== HERO: Title / Authors / Buttons ===== -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">DepthWorld: 3D World Model for Robot Manipulation</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Jai Bardhan,&nbsp;</span>
+            <span class="author-block">Josef Šivic,&nbsp;</span>
+            <span class="author-block">Vladimír Petrík</span>
+          </div>
+          <div class="is-size-6 publication-authors" style="margin-top: 0.4rem; color: #555;">
+            <span class="author-block">Czech Institute of Informatics, Robotics and Cybernetics (CIIRC),<br>Czech Technical University in Prague</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- TODO: set the real paper / code URLs (or remove buttons that don't apply yet). -->
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TEASER VIDEO ===== -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <div class="video-embed">
+        <iframe src="https://www.youtube-nocookie.com/embed/iNms2gopiSU"
+                title="DepthWorld" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+      </div>
+      <h2 class="subtitle has-text-centered">
+        <strong>DepthWorld</strong> jointly predicts multi-view RGB and metric depth, producing
+        rollouts that compose into a single, geometrically consistent 3D world.
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== ABSTRACT ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            World models offer a data-driven alternative to traditional simulators for robotics,
+            with applications spanning policy evaluation, improvement, and planning. All of these
+            uses depend on faithful 3D geometry, yet current video-based world models are trained
+            on RGB alone and produce rollouts that look correct frame-by-frame but do not compose
+            into a consistent 3D world. Closing this gap requires progress on two fronts:
+            large-scale 3D supervision for manipulation, and an architecture that can absorb it
+            without disturbing strong pretrained video priors.
+          </p>
+          <p>
+            We introduce a calibration pipeline that combines learned stereo depth with a joint
+            factor graph, pooling all episodes collected from the same physical robot to recover
+            its shared kinematic parameters alongside per-scene extrinsics. Applied to the DROID
+            dataset, this yields <strong>DROID-3D</strong>, a calibrated 3D dataset providing
+            dense metric depth and recalibrated multi-view extrinsics (achieving &lt; 0.7 px
+            reprojection error on 90% of episodes for external cameras). We then train
+            <strong>DepthWorld</strong>, a Stable Video Diffusion-based world model that jointly
+            predicts multi-view RGB and depth via spatial latent tiling, leaving the pretrained
+            VAE unchanged. Depth supervision improves RGB prediction itself by
+            <strong>+1.48 dB PSNR</strong> over an identical RGB-only baseline at equal training
+            budget, while simultaneously yielding accurate metric depth for downstream geometric
+            reasoning.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== TEASER FIGURE (Fig. 1) ===== -->
+<section class="section section-gray">
+  <div class="container is-max-desktop">
+    <figure>
+      <img src="./assets/figures/teaser.png" alt="DepthWorld vs RGB-only baseline"
+           style="width: 100%; border-radius: 6px;">
+    </figure>
+    <p class="caption has-text-centered">
+      The RGB-only baseline fails to maintain the shape of the cutlery, and the object
+      disappears. DepthWorld capitalizes on the depth inputs to accurately maintain the cutlery's
+      shape throughout the rollout while producing high-quality metric depth maps.
+    </p>
+  </div>
+</section>
+
+
+<!-- ===== MOTIVATION ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Geometry is the Missing Signal</h2>
+    <div class="content has-text-justified">
+      <p>
+        Action-conditioned video models have become a learned substitute for physics-based
+        simulators, with rollouts increasingly used for policy evaluation, policy improvement,
+        and planning — uses in which the geometric fidelity of the rollout determines whether
+        the signal is usable. But current video world models are trained on RGB alone, and the
+        training loss provides no signal to resolve the underlying 3D ambiguity of pixel
+        sequences.
+      </p>
+      <p>
+        The result is rollouts that are visually plausible but geometrically incoherent:
+        predicted depth disagrees across views of the same scene, the model struggles to reason
+        about occlusion and contact, and object shape and identity degrade over the course of a
+        rollout. The natural fix — supervise geometry directly during training — does not apply
+        out of the box, for two reasons. First, robot teleoperation datasets capture appearance
+        and dynamics at scale, but their geometric annotations are secondary outputs of the
+        collection pipeline, far below the quality geometric pretraining demands. Second, current
+        video world models rely on delicate pretrained diffusion priors; conventional ways of
+        adding spatial modalities (VAE channel expansion, dual-branch U-Nets) require destructive
+        re-initializations that corrupt those priors.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== DROID-3D ===== -->
+<section class="section section-gray">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">DROID-3D: A Calibrated 3D Corpus</h2>
+    <div class="content has-text-justified">
+      <p>
+        Our calibration pipeline takes any multi-view stereo teleoperation dataset with a known
+        URDF and produces a calibrated RGB-D corpus in the robot's coordinate frame, in two
+        stages.
+      </p>
+      <p>
+        <strong>Stage 1 — Initial multi-view calibration.</strong> Manipulation scenes are
+        dominated by textureless tabletops and specular arms, where classical stereo SDKs fail.
+        We recover per-view metric depth from each stereo pair with a learned global-matching
+        network (S²M²), then enforce multi-view consistency through a robust two-pass bundle
+        adjustment driven by dense RoMa-v2 correspondences.
+      </p>
+      <p>
+        <strong>Stage 2 — Robot-grounded joint optimization.</strong> We render the URDF into
+        each external view to anchor the rig to the robot's physical base frame, then build a
+        single factor graph spanning <em>all</em> episodes of a given robot. Pooling every
+        episode lets us cleanly separate transient per-scene extrinsic noise from shared
+        kinematic parameters (hand-eye correction and joint-encoder offsets), multiplying the
+        correction signal for the latter by the number of episodes. A GPU-accelerated
+        Levenberg–Marquardt solver exploits the sparse Schur structure, keeping wall time to
+        roughly 12.5 minutes per robot group.
+      </p>
+      <p>
+        Applied to DROID's raw 71k-trajectory release, this yields <strong>DROID-3D</strong>:
+        dense metric depth and recalibrated multi-view extrinsics across
+        <strong>71,100 episodes, 28 robots, and 13 labs</strong>.
+      </p>
+    </div>
+
+    <figure style="margin-top: 1.5rem;">
+      <img src="./assets/figures/droid3d_pipeline.png" alt="DROID-3D calibration pipeline"
+           style="width: 100%; border-radius: 6px;">
+    </figure>
+    <p class="caption has-text-centered">
+      <strong>DROID-3D calibration pipeline.</strong> Given raw stereo from two external cameras
+      and a wrist-mounted camera together with the robot's URDF and joint encoder readings,
+      Stage 1 recovers per-view metric depth and enforces multi-view consistency. Stage 2 renders
+      the URDF into each external view to ground the rig to the robot frame, then forms a joint
+      factor graph that pools all episodes of a robot to recover per-scene extrinsic corrections
+      alongside shared kinematic parameters.
+    </p>
+  </div>
+</section>
+
+
+<!-- ===== CALIBRATION ACCURACY (Table 1) ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h3 class="title is-4">Calibration Accuracy</h3>
+    <div class="content has-text-justified">
+      <p>
+        We evaluate calibration on ~1,000 scenes against a per-scene refinement baseline modeled
+        on PointWorld (VGGT initialization + per-scene optimization, with S²M² substituted as the
+        depth source to match ours). The gap is large on every axis, and our coupled optimization
+        has no analogue to the baseline's ~18% per-scene convergence-failure rate.
+      </p>
+    </div>
+
+    <div class="results-table-wrapper">
+      <table class="table is-bordered is-striped is-hoverable is-fullwidth results-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="vertical-align: middle;">Metric</th>
+            <th colspan="2">All scenes (n = 995)</th>
+            <th colspan="2">PointWorld-converged subset (n = 815)</th>
+          </tr>
+          <tr>
+            <th>PointWorld</th>
+            <th>Ours</th>
+            <th>PointWorld</th>
+            <th>Ours</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ext–ext reproj. median (px) ↓</td>
+            <td>5.84</td>
+            <td><strong>0.25</strong></td>
+            <td>5.67</td>
+            <td><strong>0.25</strong></td>
+          </tr>
+          <tr>
+            <td>Wrist–ext reproj. median (px) ↓</td>
+            <td>13.19</td>
+            <td><strong>1.03</strong></td>
+            <td>12.52</td>
+            <td><strong>1.02</strong></td>
+          </tr>
+          <tr>
+            <td>Robot depth median (mm) ↓</td>
+            <td>111.3</td>
+            <td><strong>14.0</strong></td>
+            <td>104.6</td>
+            <td><strong>13.9</strong></td>
+          </tr>
+          <tr>
+            <td>Mask IoU mean ↑</td>
+            <td>0.440</td>
+            <td><strong>0.810</strong></td>
+            <td>0.458</td>
+            <td><strong>0.819</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">
+      Calibration quality on ~1,000 evaluation scenes. The right block restricts to the subset
+      where the baseline's per-scene refinement converges; the gap persists.
+    </p>
+
+    <h3 class="title is-4" style="margin-top: 2rem;">Pose Estimation Quality</h3>
+    <div class="content has-text-justified">
+      <p>
+        Qualitative comparison of the recovered poses against the PointWorld-based baseline. We
+        show only the points corresponding to segmented robot pixels, lifted into the robot base
+        frame. In every case our method produces significantly more aligned poses — the average
+        robot depth error is ~110–130 mm for the baseline versus ~15–20 mm for ours.
+      </p>
+    </div>
+    <figure style="margin-top: 1rem;">
+      <img src="./assets/figures/pose_qualitative.png" alt="Pose estimation: baseline vs ours"
+           style="width: 100%; border-radius: 6px;">
+    </figure>
+    <p class="caption has-text-centered">
+      Pose estimation of the PointWorld-based baseline (left) vs. ours (right). The baseline's
+      poses do not align with the robot, while ours do consistently.
+    </p>
+  </div>
+</section>
+
+
+<!-- ===== DEPTHWORLD METHOD ===== -->
+<section class="section section-gray">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">DepthWorld: A 3D-Consistent World Model</h2>
+    <div class="content has-text-justified">
+      <p>
+        DepthWorld consumes the dense metric depth and calibrated extrinsics of DROID-3D as a
+        direct training signal, through two mechanisms that leave the pretrained backbone intact.
+      </p>
+      <p>
+        <strong>Spatial latent tiling.</strong> Rather than altering the U-Net, we exploit the
+        SVD VAE's natural ability to encode depth as an image. Each view-modality tile (RGB and
+        depth, for two external and one wrist camera) is encoded by the <em>unmodified</em> VAE
+        and placed side-by-side in a wider latent grid — a single 72×80 joint latent per
+        timestep. The only network change is extending the spatial position embeddings to cover
+        the wider grid. The U-Net denoises the full grid as one tensor over an 11-frame window
+        (6 history, 5 future) at 5 Hz.
+      </p>
+      <p>
+        <strong>Robot-frame point-map supervision.</strong> To make cross-view coherence
+        explicit, a lightweight DPT point-map head (initialized from VGGT) lifts predicted future
+        frames into the robot base frame and supervises them against unified 3D point maps, with
+        a confidence-weighted robust loss. This acts as a fine-grained 3D regularizer on top of
+        the cross-modality constraints the tiled latent already learns.
+      </p>
+    </div>
+
+    <figure style="margin-top: 1.5rem;">
+      <img src="./assets/figures/architecture.png" alt="DepthWorld architecture"
+           style="width: 100%; border-radius: 6px;">
+    </figure>
+    <p class="caption has-text-centered">
+      <strong>DepthWorld architecture.</strong> Multi-view RGB and depth are independently
+      encoded into a spatially tiled latent grid (72×80) for joint U-Net denoising, preserving
+      pretrained SVD priors. Predicted future latents pass through a DPT head to predict a 3D
+      point map (X, Y, Z) and confidence in the robot base frame, supervised by a robust
+      geometric loss.
+    </p>
+  </div>
+</section>
+
+
+<!-- ===== RESULTS (Table 2) ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Depth Supervision Improves RGB</h2>
+    <div class="content has-text-justified">
+      <p>
+        We evaluate on 256 held-out DROID trajectories with 10 consecutive autoregressive
+        rollouts, comparing the RGB-only Ctrl-World backbone against our joint model
+        (<strong>RGB+D</strong>) and the variant that adds the point-map head
+        (<strong>RGB+D PM-DPT</strong>). Adding depth as a joint prediction target through
+        spatial latent tiling delivers a clear RGB gain at equal training budget:
+        <strong>+1.48 dB PSNR</strong> on external views and <strong>+1.02 dB</strong> on wrist.
+        The point-map loss further refines depth — especially on the challenging wrist view —
+        while fully maintaining RGB quality.
+      </p>
+    </div>
+
+    <div class="results-table-wrapper">
+      <table class="table is-bordered is-striped is-hoverable is-fullwidth results-table">
+        <thead>
+          <tr>
+            <th>View</th>
+            <th>Model</th>
+            <th>PSNR ↑</th>
+            <th>SSIM ↑</th>
+            <th>LPIPS ↓</th>
+            <th>AbsRel ↓</th>
+            <th>RMSE ↓</th>
+            <th>δ₁ ↑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="3" style="vertical-align: middle; font-weight: 500;">External</td>
+            <td>RGB</td>
+            <td>22.63</td>
+            <td>0.8170</td>
+            <td>0.0930</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>RGB+D</td>
+            <td>24.09</td>
+            <td><strong>0.8333</strong></td>
+            <td><strong>0.0889</strong></td>
+            <td><strong>0.0765</strong></td>
+            <td>0.220</td>
+            <td>0.9432</td>
+          </tr>
+          <tr>
+            <td><strong>RGB+D PM-DPT</strong></td>
+            <td><strong>24.11</strong></td>
+            <td><strong>0.8333</strong></td>
+            <td>0.0891</td>
+            <td>0.0782</td>
+            <td><strong>0.219</strong></td>
+            <td><strong>0.9434</strong></td>
+          </tr>
+          <tr>
+            <td rowspan="3" style="vertical-align: middle; font-weight: 500;">Wrist</td>
+            <td>RGB</td>
+            <td>16.98</td>
+            <td>0.5737</td>
+            <td>0.3228</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>RGB+D</td>
+            <td>17.96</td>
+            <td>0.6106</td>
+            <td>0.3137</td>
+            <td>0.2230</td>
+            <td>0.150</td>
+            <td>0.8182</td>
+          </tr>
+          <tr>
+            <td><strong>RGB+D PM-DPT</strong></td>
+            <td><strong>18.00</strong></td>
+            <td><strong>0.6129</strong></td>
+            <td><strong>0.3131</strong></td>
+            <td><strong>0.2182</strong></td>
+            <td><strong>0.148</strong></td>
+            <td><strong>0.8210</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">
+      World-model prediction quality on held-out trajectories. Depth metrics are against the
+      depth obtained from DROID-3D. The RGB-only baseline does not predict depth (—).
+    </p>
+  </div>
+</section>
+
+
+<!-- ===== QUALITATIVE ===== -->
+<section class="section section-gray">
+  <div class="container is-max-desktop">
+    <h3 class="title is-4">Qualitative Comparison</h3>
+    <div class="content has-text-justified">
+      <p>
+        Two rollouts by the baseline RGB model and DepthWorld, which also produces high-quality
+        depth. In both cases the models start from an identical ground-truth first frame.
+      </p>
+    </div>
+    <div class="columns is-centered">
+      <div class="column">
+        <img src="./assets/figures/qual_1.png" alt="Qualitative rollout — cup grasp"
+             style="width: 100%; border-radius: 6px;">
+        <p class="caption has-text-centered">
+          The RGB-only model fails to simulate the robot grasping the red cup; DepthWorld
+          accurately simulates the interaction and produces an aligned depth map.
+        </p>
+      </div>
+      <div class="column">
+        <img src="./assets/figures/qual_2.png" alt="Qualitative rollout — wardrobe"
+             style="width: 100%; border-radius: 6px;">
+        <p class="caption has-text-centered">
+          Without depth supervision, the RGB-only model cannot distinguish the open wardrobe
+          door from a solid surface and simulates the arm colliding with it; DepthWorld correctly
+          generates the arm moving inside the wardrobe.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== BIBTEX ===== -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <p>If you find this work useful, please cite:</p>
+    <pre><code class="plaintext">@inproceedings{bardhan2026depthworld,
+  title     = {DepthWorld: 3D World Model for Robot Manipulation},
+  author    = {Bardhan, Jai and \v{S}ivic, Josef and Petr\'{i}k, Vladim\'{i}r},
+  booktitle = {Conference on Robot Learning (CoRL)},
+  year      = {2026}
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="https://jai2500.github.io">
+        <i class="fas fa-home"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            This website is based on the
+            <a href="https://nerfies.github.io">Nerfies</a> template, licensed under a
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Navbar burger toggle
+  $(document).ready(function() {
+    $(".navbar-burger").click(function() {
+      $(".navbar-burger").toggleClass("is-active");
+      $(".navbar-menu").toggleClass("is-active");
+    });
+  });
+
+  // Syntax highlighting
+  hljs.initHighlightingOnLoad();
+</script>
+
+</body>
+</html>
