@@ -3,13 +3,43 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-        content="DepthWorld is a Stable Video Diffusion-based 3D world model for robot manipulation that jointly predicts multi-view RGB and metric depth, trained on the calibrated DROID-3D dataset.">
-  <meta name="keywords" content="DepthWorld, DROID-3D, 3D world models, robot manipulation, video diffusion, metric depth, calibration">
+        content="DepthWorld is a Stable Video Diffusion-based 3D world model for robot manipulation that jointly predicts multi-view RGB and metric depth, trained on DROID-3D — a large-scale calibrated 3D robot dataset with dense metric depth and robot-grounded extrinsics.">
+  <meta name="keywords" content="DepthWorld, DROID-3D, DROID, 3D world model, world model, geometric foundation model, geometry model, metric depth, multi-view depth, robot manipulation, robot learning, video diffusion, Stable Video Diffusion, camera calibration, point map, PersistWorld">
+  <meta name="author" content="Jai Bardhan, Josef Šivic, Vladimír Petrík">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DepthWorld: 3D World Model for Robot Manipulation</title>
+  <title>DepthWorld: 3D World Model for Robot Manipulation (DROID-3D)</title>
+  <link rel="canonical" href="https://jai2500.github.io/depthworld/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://jai2500.github.io/depthworld/">
+  <meta property="og:title" content="DepthWorld: 3D World Model for Robot Manipulation (DROID-3D)">
+  <meta property="og:description" content="A 3D world model that jointly predicts multi-view RGB and metric depth for robot manipulation, trained on the calibrated DROID-3D dataset.">
+  <meta property="og:image" content="https://jai2500.github.io/depthworld/assets/figures/teaser.png">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:description" content="DepthWorld: 3D World Model for Robot Manipulation">
+  <meta name="twitter:title" content="DepthWorld: 3D World Model for Robot Manipulation (DROID-3D)">
+  <meta name="twitter:description" content="A 3D world model that jointly predicts multi-view RGB and metric depth for robot manipulation, trained on the calibrated DROID-3D dataset.">
+  <meta name="twitter:image" content="https://jai2500.github.io/depthworld/assets/figures/teaser.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "DepthWorld: 3D World Model for Robot Manipulation",
+    "name": "DepthWorld: 3D World Model for Robot Manipulation",
+    "author": [
+      {"@type": "Person", "name": "Jai Bardhan"},
+      {"@type": "Person", "name": "Josef Šivic"},
+      {"@type": "Person", "name": "Vladimír Petrík"}
+    ],
+    "datePublished": "2026",
+    "url": "https://jai2500.github.io/depthworld/",
+    "image": "https://jai2500.github.io/depthworld/assets/figures/teaser.png",
+    "keywords": "DepthWorld, DROID-3D, DROID, 3D world model, geometry model, metric depth, robot manipulation, video diffusion, PersistWorld",
+    "description": "DepthWorld is a Stable Video Diffusion-based 3D world model for robot manipulation that jointly predicts multi-view RGB and metric depth, trained on the calibrated DROID-3D dataset."
+  }
+  </script>
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
         rel="stylesheet">
@@ -94,6 +124,10 @@
           <i class="fas fa-home"></i>
         </span>
       </a>
+      <a class="navbar-item" href="https://jai2500.github.io/persistworld/">
+        <span class="icon"><i class="fas fa-robot"></i></span>
+        <span>PersistWorld</span>
+      </a>
     </div>
   </div>
 </nav>
@@ -134,6 +168,15 @@
                     <i class="fab fa-github"></i>
                   </span>
                   <span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://jai2500.github.io/persistworld/"
+                   class="external-link button is-normal is-rounded is-link">
+                  <span class="icon">
+                    <i class="fas fa-robot"></i>
+                  </span>
+                  <span>PersistWorld</span>
                 </a>
               </span>
             </div>

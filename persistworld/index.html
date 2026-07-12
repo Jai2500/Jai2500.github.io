@@ -3,13 +3,46 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-        content="PersistWorld closes the closed-loop gap in robot world models via RL post-training, achieving state-of-the-art rollout fidelity on the DROID dataset.">
-  <meta name="keywords" content="PersistWorld, robot world models, reinforcement learning, video generation, DROID">
+        content="PersistWorld (Persistent Robot World Models) stabilizes multi-step robot world model rollouts via reinforcement-learning post-training, achieving state-of-the-art long-horizon rollout fidelity on the DROID robot manipulation dataset. Accepted to ECCV 2026.">
+  <meta name="keywords" content="PersistWorld, persistent world model, persistent robot world model, reinforcement learning world model, RL world model, RL post-training, robot world models, world model, DROID, DROID dataset, robot manipulation, robot learning, video diffusion, autoregressive rollout, closed-loop gap, ECCV 2026">
+  <meta name="author" content="Jai Bardhan, Patrik Drozdík, Josef Šivic, Vladimír Petrík">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PersistWorld: Stabilizing Multi-step Robot World Model Rollouts via Reinforcement Learning</title>
+  <title>PersistWorld — Persistent Robot World Models: Stabilizing Multi-Step Rollouts via Reinforcement Learning (ECCV 2026)</title>
+  <link rel="canonical" href="https://jai2500.github.io/persistworld/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://jai2500.github.io/persistworld/">
+  <meta property="og:title" content="PersistWorld — Persistent Robot World Models: Stabilizing Multi-Step Rollouts via Reinforcement Learning (ECCV 2026)">
+  <meta property="og:description" content="A persistent reinforcement-learning world model that stabilizes long-horizon robot rollouts via RL post-training on the DROID dataset. Accepted to ECCV 2026.">
+  <meta property="og:image" content="https://jai2500.github.io/persistworld/assets/figures/teaser_v3.png">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:description" content="PersistWorld: Stabilizing Multi-step Robot World Model Rollouts via Reinforcement Learning">
+  <meta name="twitter:title" content="PersistWorld — Persistent Robot World Models: Stabilizing Multi-Step Rollouts via Reinforcement Learning (ECCV 2026)">
+  <meta name="twitter:description" content="A persistent reinforcement-learning world model that stabilizes long-horizon robot rollouts via RL post-training on the DROID dataset. Accepted to ECCV 2026.">
+  <meta name="twitter:image" content="https://jai2500.github.io/persistworld/assets/figures/teaser_v3.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "Persistent Robot World Models: Stabilizing Multi-Step Rollouts via Reinforcement Learning",
+    "name": "Persistent Robot World Models: Stabilizing Multi-Step Rollouts via Reinforcement Learning",
+    "alternateName": "PersistWorld",
+    "author": [
+      {"@type": "Person", "name": "Jai Bardhan"},
+      {"@type": "Person", "name": "Patrik Drozdík"},
+      {"@type": "Person", "name": "Josef Šivic"},
+      {"@type": "Person", "name": "Vladimír Petrík"}
+    ],
+    "publisher": {"@type": "Organization", "name": "European Conference on Computer Vision (ECCV) 2026"},
+    "datePublished": "2026",
+    "url": "https://jai2500.github.io/persistworld/",
+    "image": "https://jai2500.github.io/persistworld/assets/figures/teaser_v3.png",
+    "keywords": "PersistWorld, persistent world model, reinforcement learning world model, robot world models, DROID, robot manipulation, video diffusion, ECCV 2026",
+    "description": "PersistWorld is a persistent, reinforcement-learning world model that stabilizes multi-step robot world model rollouts via RL post-training, achieving state-of-the-art long-horizon rollout fidelity on the DROID dataset."
+  }
+  </script>
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
         rel="stylesheet">
@@ -94,6 +127,10 @@
           <i class="fas fa-home"></i>
         </span>
       </a>
+      <a class="navbar-item" href="https://jai2500.github.io/depthworld/">
+        <span class="icon"><i class="fas fa-cube"></i></span>
+        <span>DepthWorld</span>
+      </a>
     </div>
   </div>
 </nav>
@@ -105,7 +142,7 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">PersistWorld: Stabilizing Multi-step Robot World Model Rollouts via Reinforcement Learning</h1>
+          <h1 class="title is-1 publication-title">PersistWorld<br>Persistent Robot World Models: Stabilizing Multi-Step Rollouts via Reinforcement Learning</h1>
           <div class="is-size-5 publication-authors">
             <span class="author-block">Jai Bardhan,&nbsp;</span>
             <span class="author-block">Patrik Drozdík,&nbsp;</span>
@@ -114,6 +151,15 @@
           </div>
           <div class="is-size-6 publication-authors" style="margin-top: 0.4rem; color: #555;">
             <span class="author-block">Czech Institute of Informatics, Robotics and Cybernetics (CIIRC),<br>Czech Technical University in Prague</span>
+          </div>
+          <div style="margin-top: 0.9rem;">
+            <span style="font-size: 1.7rem; vertical-align: middle;">🎉</span>
+            <span style="font-size: 1.7rem; font-weight: 800; vertical-align: middle; letter-spacing: 0.01em;
+                         background: linear-gradient(90deg, #6a11cb, #2575fc);
+                         -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+              Accepted to ECCV 2026
+            </span>
+            <span style="font-size: 1.7rem; vertical-align: middle;">🎉</span>
           </div>
 
           <div class="column has-text-centered">
@@ -134,6 +180,15 @@
                     <i class="fab fa-github"></i>
                   </span>
                   <span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://jai2500.github.io/depthworld/"
+                   class="external-link button is-normal is-rounded is-link">
+                  <span class="icon">
+                    <i class="fas fa-cube"></i>
+                  </span>
+                  <span>DepthWorld</span>
                 </a>
               </span>
             </div>
@@ -516,11 +571,11 @@
     <h2 class="title">BibTeX</h2>
     <p>If you find this work useful, please cite:</p>
     <pre><code class="plaintext">@inproceedings{bardhan2026persistworld,
-  title     = {PersistWorld: Stabilizing Multi-step Robot World Model Rollouts
+  title     = {Persistent Robot World Models: Stabilizing Multi-Step Rollouts
                via Reinforcement Learning},
-  author    = {Bardhan, Jai and Drozd\'{i}k, Patrik and \v{S}ivic, Josef
-               and Petr\'{i}k, Vladim\'{i}r},
-  booktitle = {ArXiv Preprint},
+  author    = {Bardhan, Jai and Drozd\'{i}k, Patrik and Sivic, Josef
+               and Petrik, Vladimir},
+  booktitle = {European Conference on Computer Vision (ECCV)},
   year      = {2026}
 }</code></pre>
   </div>
