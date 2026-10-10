@@ -1,0 +1,227 @@
+// Imagined rollout strip (_includes/rollout_strip.liquid).
+// The placeholder is one sprite of 7 x 3 alpha masks (block, agent, goal rows);
+// each layer is a solid theme color shown through its mask, so first paint
+// follows light/dark mode and the accent with no JavaScript. Live frames are
+// drawn into the canvases with the same colors and fade in over it.
+
+.rollout-strip {
+  // Its own block formatting context: beside the floated profile photo the whole strip narrows
+  // to the space left of it instead of running underneath.
+  display: flow-root;
+  margin: 1.25rem 0 1.75rem;
+
+  .rollout-frames {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: clamp(3px, 1vw, 8px);
+  }
+
+  .rollout-slot {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 3px;
+    background: var(--global-bg-color);
+    box-shadow: 0 0 0 1px var(--global-divider-color);
+  }
+
+  .rollout-cell:first-child .rollout-slot {
+    box-shadow: 0 0 0 1px var(--global-text-color-light);
+  }
+
+  .rollout-slot > * {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .rs-goal,
+  .rs-block,
+  .rs-agent {
+    -webkit-mask-image: var(--rs-sprite);
+    mask-image: var(--rs-sprite);
+    -webkit-mask-size: 700% 300%;
+    mask-size: 700% 300%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  .rs-block {
+    background: var(--global-theme-color);
+    -webkit-mask-position: calc(var(--i) * 100% / 6) 0%;
+    mask-position: calc(var(--i) * 100% / 6) 0%;
+  }
+
+  .rs-agent {
+    background: var(--global-text-color);
+    -webkit-mask-position: calc(var(--i) * 100% / 6) 50%;
+    mask-position: calc(var(--i) * 100% / 6) 50%;
+  }
+
+  .rs-goal {
+    background: var(--global-divider-color);
+    -webkit-mask-position: calc(var(--i) * 100% / 6) 100%;
+    mask-position: calc(var(--i) * 100% / 6) 100%;
+  }
+
+  canvas {
+    opacity: 0;
+    transition: opacity 0.45s ease-out;
+    image-rendering: auto;
+  }
+
+  canvas.live {
+    opacity: 1;
+  }
+
+  .rollout-t {
+    display: block;
+    margin-top: 0.3rem;
+    text-align: center;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    color: var(--global-text-color-light);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--global-text-color-light);
+  }
+
+  .rollout-seed {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.92em;
+    opacity: 0.7;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rollout-expand {
+    float: right;
+    margin-left: 1rem;
+  }
+
+  .rollout-again,
+  .rollout-play-btn,
+  .rollout-expand {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: var(--global-theme-color);
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--global-hover-color);
+      text-decoration: underline;
+    }
+
+    &:disabled {
+      cursor: progress;
+      opacity: 0.6;
+    }
+  }
+
+  .rollout-play-btn::before {
+    content: "\00a0\00b7\00a0";
+    color: var(--global-text-color-light);
+  }
+
+  // Once a live strip has been shown the placeholder is never needed again; hiding it keeps
+  // later fades (refills, interactive frames) from flashing the pre-rendered frames through.
+  &.rollout-has-live {
+    .rs-goal,
+    .rs-block,
+    .rs-agent {
+      visibility: hidden;
+    }
+  }
+
+  // Live strip: clicking it enters play mode.
+  &.rollout-live .rollout-frames {
+    cursor: pointer;
+  }
+
+  // Play mode: history dims, the newest frame takes focus and becomes the play area.
+  &.rollout-play {
+    .rollout-frames {
+      cursor: default;
+    }
+
+    .rollout-cell {
+      opacity: 0.4;
+      transition: opacity 0.3s ease-out;
+    }
+
+    .rollout-cell:last-child {
+      opacity: 1;
+    }
+
+    .rollout-cell:first-child .rollout-slot {
+      box-shadow: 0 0 0 1px var(--global-divider-color);
+    }
+
+    .rollout-cell:last-child .rollout-slot {
+      box-shadow: 0 0 0 2px var(--global-theme-color);
+      cursor: crosshair;
+      touch-action: none;
+      outline: none;
+    }
+
+    .rollout-cell:last-child .rollout-slot:focus-visible {
+      box-shadow:
+        0 0 0 2px var(--global-theme-color),
+        0 0 0 5px var(--global-divider-color);
+    }
+  }
+
+  &.rollout-busy .rollout-cell:last-child .rollout-slot {
+    animation: rollout-pulse 0.8s ease-in-out infinite alternate;
+  }
+
+  .rollout-slot > .rollout-cursor {
+    inset: auto;
+    width: 14%;
+    height: 14%;
+    border: 2px solid var(--global-theme-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 576px) {
+    .rollout-t {
+      font-size: 0.6rem;
+    }
+  }
+
+  // On phones the profile photo is not floated, so the strip is already full width.
+  @media (max-width: 575.98px) {
+    .rollout-expand {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    canvas,
+    .rollout-cell {
+      transition: none;
+    }
+
+    &.rollout-busy .rollout-cell:last-child .rollout-slot {
+      animation: none;
+    }
+  }
+}
+
+@keyframes rollout-pulse {
+  to {
+    box-shadow:
+      0 0 0 2px var(--global-hover-color),
+      0 0 0 4px var(--global-divider-color);
+  }
+}

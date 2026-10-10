@@ -11,3 +11,5 @@ assets/libs/
 node_modules/
 vendor
 .idea
+# local rollout-strip bundle (INTEGRATION.md, tarball); its files are merged into the site
+rollout_strip/

@@ -239,6 +239,7 @@ exclude:
   - purgecss.config.js
   - README.md
   - readme_preview/
+  - rollout_strip/ # local rollout-strip bundle (INTEGRATION.md, tarball); never publish
   - vendor
 keep_files:
   - CNAME
@@ -278,7 +279,14 @@ sass:
 # -----------------------------------------------------------------------------
 
 jekyll-minifier:
-  exclude: ["robots.txt", "assets/js/search/*.js", "assets/libs/**/*", "persistworld/**/*", "depthworld/**/*"]
+  exclude:
+    - "robots.txt"
+    - "assets/js/search/*.js"
+    - "assets/libs/**/*"
+    - "persistworld/**/*"
+    - "depthworld/**/*"
+    - "assets/js/rollout/*.js" # module workers and dynamic import(); Uglifier can break them
+    - "assets/models/rollout/*"
   uglifier_args:
     harmony: true
 

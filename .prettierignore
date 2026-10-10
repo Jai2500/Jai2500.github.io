@@ -14,3 +14,6 @@ _sass/tabler-icons/*.scss
 # standalone project pages, served verbatim (also excluded from jekyll-minifier)
 depthworld/**
 persistworld/**
+# rollout strip runtime and exported model files, copied verbatim from the tinywm repo
+assets/js/rollout/**
+assets/models/rollout/**

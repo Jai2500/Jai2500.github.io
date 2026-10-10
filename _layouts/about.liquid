@@ -38,6 +38,11 @@ layout: default
       </div>
     {% endif %}
 
+    {% comment %} After the floated photo, so the strip sits beside it; its expand button moves it above. {% endcomment %}
+    {% if page.rollout_strip %}
+      {% include rollout_strip.liquid %}
+    {% endif %}
+
     <div class="clearfix">{{ content }}</div>
 
     <!-- News -->

@@ -1,0 +1,25 @@
+{
+ "arch": "unet",
+ "weights": "tinywm-unet-s.9a5d02c153.bin",
+ "cfg": {
+  "chans": [
+   24,
+   48,
+   96
+  ],
+  "act_dim": 16,
+  "cdim": 128,
+  "in_ch": 3,
+  "ctx_frames": 1
+ },
+ "nfe": 2,
+ "sigma_ctx": 0.07,
+ "schedule": [
+  1.0,
+  0.5,
+  0.0
+ ],
+ "step": 3000,
+ "params": 1498435,
+ "onnx": "tinywm-unet-s.31b5d812a9.onnx"
+}

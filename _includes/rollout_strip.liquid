@@ -1,0 +1,52 @@
+{% comment %}
+  Imagined rollout strip. First paint is a finished, theme-aware placeholder
+  (a pre-rendered rollout drawn through CSS masks); loader.js upgrades it to a
+  live rollout after load, when idle and on screen. See _sass/_rollout.scss.
+{% endcomment %}
+<figure
+  class="rollout-strip"
+  data-manifest="{{ '/assets/models/rollout/manifest.json' | relative_url }}"
+  data-ort="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/"
+  style="--rs-sprite: url('{{ '/assets/img/rollout/placeholder.webp' | relative_url }}')"
+>
+  <div
+    class="rollout-frames"
+    role="img"
+    aria-label="Seven frames of a toy pushing task: a round agent pushes a T-shaped block toward an outlined goal. The first frame comes from a physics simulator; each later frame is imagined by a 1.5M-parameter world model from the previous frames and the agent's actions."
+  >
+    {% for i in (0..6) %}
+      <div class="rollout-cell" style="--i: {{ i }}">
+        <div class="rollout-slot">
+          <span class="rs-goal"></span><span class="rs-block"></span><span class="rs-agent"></span>
+          <canvas width="64" height="64"></canvas>
+        </div>
+        <span class="rollout-t">t = {{ i | times: 8 }}</span>
+      </div>
+    {% endfor %}
+  </div>
+  <figcaption>
+    <button type="button" class="rollout-expand" aria-pressed="false" hidden>⤢ expand</button>
+    <span class="rollout-status">pre-rendered rollout</span><button type="button" class="rollout-again" hidden>↻ imagine another</button
+    ><button type="button" class="rollout-play-btn" hidden>◎ push it yourself</button>
+  </figcaption>
+</figure>
+<script>
+  // The strip starts beside the floated profile photo; "expand" moves it above the photo (full width,
+  // under the header) and back. Moving the node keeps the live canvases and any play session.
+  (() => {
+    const fig = document.currentScript.previousElementSibling;
+    const photo = fig.previousElementSibling;
+    const btn = fig.querySelector('.rollout-expand');
+    if (!photo || !photo.classList.contains('profile')) return;
+    btn.hidden = false;
+    btn.addEventListener('click', () => {
+      const wide = btn.getAttribute('aria-pressed') !== 'true';
+      if (wide) photo.before(fig);
+      else photo.after(fig);
+      btn.setAttribute('aria-pressed', String(wide));
+      btn.textContent = wide ? '⤡ collapse' : '⤢ expand';
+      btn.focus({ preventScroll: true });
+    });
+  })();
+</script>
+<script type="module" src="{{ '/assets/js/rollout/loader.js' | relative_url }}"></script>

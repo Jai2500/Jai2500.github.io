@@ -15,6 +15,7 @@ news: true # includes a list of news items
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 latest_posts: false
+rollout_strip: true # world-model rollout strip under the header (_includes/rollout_strip.liquid)
 ---
 
 Hello 👋 !
