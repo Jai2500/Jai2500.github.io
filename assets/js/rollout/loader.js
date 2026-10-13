@@ -41,7 +41,8 @@ function themeColors() {
   };
   const bg = rgb(v('--global-bg-color', '#fff'), '#fff');
   const under = `rgb(${bg[0]},${bg[1]},${bg[2]})`;
-  return [bg, rgb(v('--global-divider-color', '#ddd'), under), rgb(v('--global-theme-color', '#b509ac'), under),
+  const goal = v('--rollout-goal-color', v('--global-divider-color', '#ddd'));
+  return [bg, rgb(goal, under), rgb(v('--global-theme-color', '#376691'), under),
     rgb(v('--global-text-color', '#000'), under)];
 }
 
@@ -71,17 +72,32 @@ function boot(list) {
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let colors = themeColors(), worker = null, timer = 0, seed = 0, shownSeed = 0, shown = [], next = [];
   let play = null, agent = null, params = '';
-  // "A rollout imagined by a 1.5M-param world model for this visit #4821 · <note> · ↻ … · ◎ …"
-  // (parameter count from the manifest; the seed as a small muted tag).
+  // "1.5M-param world model, running in your browser #4821 · <note> · ↻ … · ◎ …", after the static
+  // task key (parameter count from the manifest; the seed as a small muted tag; the note in its own
+  // span so a goal note can be styled).
   const caption = (note = '', end = ' \u00b7 ') => {
     const tag = document.createElement('span');
     tag.className = 'rollout-seed';
     tag.textContent = `#${shownSeed}`;
-    status.replaceChildren(`A rollout imagined by a ${params}world model for this visit `, tag,
-      note ? ` \u00b7 ${note}` : '', end);
+    const wm = document.createElement('span'); // accented, like the "imagined by the world model" key
+    wm.className = 'rollout-wm';
+    wm.textContent = 'world model';
+    const parts = [params, wm, ', running in your browser ', tag];
+    if (note) {
+      const n = document.createElement('span');
+      n.className = 'rollout-note';
+      n.textContent = note;
+      parts.push(' \u00b7 ', n);
+    }
+    status.replaceChildren(...parts, end);
   };
 
-  const setLabels = (n) => labels.forEach((l, i) => { l.textContent = `t = ${8 * (n - labels.length + 1 + i)}`; });
+  // Frame labels for a strip whose newest frame is step n; once it has scrolled (play mode),
+  // frame 0 is no longer the simulator frame and the key above says so.
+  const setLabels = (n) => {
+    labels.forEach((l, i) => { l.textContent = `t = ${8 * (n - labels.length + 1 + i)}`; });
+    fig.classList.toggle('rollout-scrolled', n > labels.length - 1);
+  };
   const repaint = () => canvases.forEach((c, i) => {
     if (shown[i]) paint(c, shown[i], colors);
     else c.classList.remove('live');
@@ -107,7 +123,7 @@ function boot(list) {
     timer = setTimeout(fail, TIMEOUT);
     again.disabled = true;
     playBtn.hidden = true;
-    fig.classList.remove('rollout-live');
+    fig.classList.remove('rollout-live', 'rollout-goal', 'rollout-in-goal');
     worker.postMessage({ type: 'run', seed });
   };
   // "Push it yourself": the interaction code loads only when someone opts in.
@@ -117,7 +133,7 @@ function boot(list) {
     const { startPlay } = await import('./interact.js');
     play = startPlay({
       fig, worker, agent, fail,
-      setStatus: (t) => { status.textContent = t; },
+      setStatus: (t) => { status.replaceChildren(...[].concat(t)); }, // text, or [nodes and text]
       onExit: ({ note }) => {
         play = null;
         caption(note);
