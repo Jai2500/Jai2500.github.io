@@ -9,6 +9,11 @@
   data-ort="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/"
   style="--rs-sprite: url('{{ '/assets/img/rollout/placeholder.webp' | relative_url }}')"
 >
+  {% comment %} Figure-style key over the frames, shown once a live strip is on screen. {% endcomment %}
+  <div class="rollout-key" aria-hidden="true">
+    <span class="rollout-key-real">real</span>
+    <span class="rollout-key-imagined">imagined by the world model</span>
+  </div>
   <div
     class="rollout-frames"
     role="img"
@@ -26,7 +31,11 @@
   </div>
   <figcaption>
     <button type="button" class="rollout-expand" aria-pressed="false" hidden>⤢ expand</button>
-    <span class="rollout-status">pre-rendered rollout</span><button type="button" class="rollout-again" hidden>↻ imagine another</button
+    <span class="rollout-task"
+      >Push-T: the <span class="rk-agent">●</span> agent pushes the <span class="rk-block">T</span> into its <span class="rk-goal">T</span> outline ·
+    </span>
+    <span class="rollout-status" aria-live="polite">pre-rendered rollout</span
+    ><button type="button" class="rollout-again" hidden>↻ imagine another</button
     ><button type="button" class="rollout-play-btn" hidden>◎ push it yourself</button>
   </figcaption>
 </figure>

@@ -41,7 +41,7 @@ const NOTES = [
   'imagined, not simulated',
   'nice pushing',
 ];
-const GOAL_NOTE = 'you pushed the T into the goal. the world model is very proud';
+const GOAL_NOTE = '✓ you pushed the T into the goal. the world model is very proud';
 
 function nextNote(pushes, goal) {
   if (goal) return GOAL_NOTE;
@@ -120,8 +120,15 @@ export function startPlay({ fig, worker, agent, setStatus, fail, onExit }) {
     if (m.type !== 'iframe') return;
     clearTimeout(watchdog);
     pushes++;
-    if (m.goal && !goal) setStatus(`${GOAL_NOTE} · Esc to stop · `);
-    else if (m.drift) setStatus('the block is drifting from its true shape · Esc to stop, or start over · ');
+    fig.classList.toggle('rollout-in-goal', !!m.goal); // the newest frame: green ring and check badge
+    if (m.goal && !goal) {
+      // First success: a pill in the status; the figure keeps its goal state until "imagine another".
+      const pill = document.createElement('span');
+      pill.className = 'rollout-success';
+      pill.textContent = `✓ goal reached in ${pushes} push${pushes === 1 ? '' : 'es'}`;
+      setStatus([pill, ' the world model is very proud · Esc to stop · ']);
+      fig.classList.add('rollout-goal');
+    } else if (m.drift) setStatus('the block is drifting from its true shape · Esc to stop, or start over · ');
     goal = goal || m.goal;
     busy = false;
     fig.classList.remove('rollout-busy');
@@ -206,7 +213,7 @@ export function startPlay({ fig, worker, agent, setStatus, fail, onExit }) {
     slot.removeAttribute('aria-label');
     box.setAttribute('role', 'img');
     box.setAttribute('aria-label', label);
-    fig.classList.remove('rollout-play', 'rollout-busy');
+    fig.classList.remove('rollout-play', 'rollout-busy', 'rollout-in-goal');
     onExit({ pushes, note: pushes ? nextNote(pushes, goal) : '' });
   }
   return { exit };

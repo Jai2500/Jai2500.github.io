@@ -4,16 +4,77 @@
 // follows light/dark mode and the accent with no JavaScript. Live frames are
 // drawn into the canvases with the same colors and fade in over it.
 
+// Strip colors beyond the theme: a goal outline dark enough to read the task (the divider color
+// is nearly invisible), and a success color for reaching the goal. loader.js reads both.
+:root {
+  --rollout-goal-color: #c2c2c2;
+  --rollout-success-color: #17713a; // 4.95:1 on its own pill tint, 6.1:1 on white
+}
+
+html[data-theme="dark"] {
+  --rollout-goal-color: #5a5a5f;
+  --rollout-success-color: #3fb950;
+}
+
 .rollout-strip {
   // Its own block formatting context: beside the floated profile photo the whole strip narrows
   // to the space left of it instead of running underneath.
   display: flow-root;
   margin: 1.25rem 0 1.75rem;
 
-  .rollout-frames {
+  .rollout-frames,
+  .rollout-key {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: clamp(3px, 1vw, 8px);
+  }
+
+  // Figure-style key: "real" over the simulator frame, a bracket over the imagined ones. Its space
+  // is reserved from first paint; it appears with the live strip (the placeholder makes no claim).
+  .rollout-key {
+    margin-bottom: 0.35rem;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--global-text-color-light);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.45s ease-out;
+  }
+
+  .rollout-key-real,
+  .rollout-key-imagined {
+    text-align: center;
+
+    &::after {
+      content: "";
+      display: block;
+      height: 4px;
+      margin-top: 2px;
+      border: 1px solid currentColor;
+      border-bottom: 0;
+    }
+  }
+
+  .rollout-key-imagined {
+    grid-column: 2 / -1;
+    color: var(--global-theme-color);
+  }
+
+  &.rollout-has-live .rollout-key {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  // In play mode the strip scrolls: once frame 0 is no longer the simulator frame, all are imagined.
+  &.rollout-scrolled {
+    .rollout-key-real {
+      display: none;
+    }
+
+    .rollout-key-imagined {
+      grid-column: 1 / -1;
+    }
   }
 
   .rollout-slot {
@@ -60,7 +121,7 @@
   }
 
   .rs-goal {
-    background: var(--global-divider-color);
+    background: var(--rollout-goal-color);
     -webkit-mask-position: calc(var(--i) * 100% / 6) 100%;
     mask-position: calc(var(--i) * 100% / 6) 100%;
   }
@@ -90,6 +151,50 @@
     margin-top: 0.5rem;
     font-size: 0.8rem;
     color: var(--global-text-color-light);
+  }
+
+  // Task key: glyphs in the strip's own colors (agent, block, outlined goal).
+  .rk-agent {
+    color: var(--global-text-color);
+  }
+
+  .rk-block,
+  .rk-goal {
+    font-weight: 700;
+  }
+
+  .rk-block {
+    color: var(--global-theme-color);
+  }
+
+  .rk-goal {
+    color: var(--global-text-color-light);
+
+    @supports (-webkit-text-stroke: 1px black) {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--global-text-color-light);
+    }
+  }
+
+  // "world model" in the caption, in the accent so it matches the key over the frames.
+  .rollout-wm {
+    font-weight: 500;
+    color: var(--global-theme-color);
+  }
+
+  // Reaching the goal: a pill in the status while playing, and the closing note stays green.
+  .rollout-success {
+    display: inline-block;
+    padding: 0 0.5em;
+    border-radius: 999px;
+    font-weight: 500;
+    color: var(--rollout-success-color);
+    background: color-mix(in srgb, var(--rollout-success-color) 14%, transparent);
+  }
+
+  &.rollout-goal .rollout-note {
+    font-weight: 500;
+    color: var(--rollout-success-color);
   }
 
   .rollout-seed {
@@ -183,6 +288,29 @@
     animation: rollout-pulse 0.8s ease-in-out infinite alternate;
   }
 
+  // The newest frame shows the T in its outline: green ring and a check badge.
+  &.rollout-play.rollout-in-goal .rollout-cell:last-child .rollout-slot {
+    box-shadow: 0 0 0 2px var(--rollout-success-color);
+
+    &::after {
+      content: "\2713";
+      position: absolute;
+      top: 5%;
+      right: 5%;
+      display: grid;
+      place-items: center;
+      width: 1.15rem;
+      height: 1.15rem;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--global-bg-color);
+      background: var(--rollout-success-color);
+      animation: rollout-pop 0.35s ease-out;
+    }
+  }
+
   .rollout-slot > .rollout-cursor {
     inset: auto;
     width: 14%;
@@ -194,7 +322,8 @@
   }
 
   @media (max-width: 576px) {
-    .rollout-t {
+    .rollout-t,
+    .rollout-key {
       font-size: 0.6rem;
     }
   }
@@ -208,13 +337,22 @@
 
   @media (prefers-reduced-motion: reduce) {
     canvas,
-    .rollout-cell {
+    .rollout-cell,
+    .rollout-key {
       transition: none;
     }
 
-    &.rollout-busy .rollout-cell:last-child .rollout-slot {
+    &.rollout-busy .rollout-cell:last-child .rollout-slot,
+    &.rollout-in-goal .rollout-cell:last-child .rollout-slot::after {
       animation: none;
     }
+  }
+}
+
+@keyframes rollout-pop {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
   }
 }
 
